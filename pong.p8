@@ -16,16 +16,28 @@ score = 0
 
 lives = 3
 
+lossmessage = "tu as perdu !"
+
+ballcolor = 7
+
 function movepaddle()
 	if btn(0) then
 		padx -= 3
+		if live == 0 then
+		 padx = 0
+		end
 	elseif btn(1) then
+		if live == 0 then
+		 pady = 0
+		end 
 		padx += 3
 	end
 end
 
 function _update()
-	movepaddle()
+	if lives > 0 then
+ 	movepaddle()
+	end
 	moveball()
 	bounceball()
 	bouncepaddle()
@@ -33,14 +45,18 @@ function _update()
 end
 
 function _draw()
-	rectfill(0,0,128,128,3)
+	rectfill(0,0,128,128,1)
 	print(score, 12, 6, 15)
-	for i = 1, lives do
+	for i = 0, lives do
 		spr(001, 100, 4)
 	end
+	if lives == 0
+	 then print(lossmessage,64,49,rnd(4))
+	 circfill(ballx,bally,ballsize,1)
+	end
 	print(lives,110,6,15)
-	rectfill(padx,pady,padx+padw,pady+padh,15)
-	circfill(ballx,bally,ballsize,15)
+	rectfill(padx,pady,padx+padw,pady+padh,7)
+	circfill(ballx,bally,ballsize,rnd(15))
 end
 
 function moveball()
@@ -50,17 +66,17 @@ end
 
 function bounceball()
 	if ballx < ballsize then
-		ballxdir -= ballxdir
+		ballxdir =- ballxdir
 		sfx(0)
 	end
 	
 	if ballx > 128 - ballsize then
-		ballxdir -= ballxdir
+		ballxdir =- ballxdir
 		sfx(0)
 	end
 	
 	if bally < ballsize then
-		ballydir -= ballydir
+		ballydir =- ballydir
 		sfx(0)
 	end
 end
@@ -68,18 +84,29 @@ end
 function bouncepaddle()
 	if ballx >= padx and ballx <= padx + padw and bally > pady then
 		sfx(0)
-		ballydir -= ballydir
+		ballydir =- ballydir
 		score += 10
 	end
 end
 
 function loseball()
 	if bally > 128 then
-		sfx(3)
-		bally = 24
-	end
+	
+		if lives > 0 then
+			sfx(3)
+			bally = 44
+			lives -= 1
+		
+		elseif lives == 0 then
+			ballydir = 0
+			ballxdir = 0
+			ballsize = 2
+			bally = 64
+			ballx = 64
+			ballcolor = 0
+ 	end
+ end
 end
-
 __gfx__
 00000000000bb0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000bb0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -94,3 +121,5 @@ __sfx__
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00100000255202552024520235202352022520205201f5201e5201d5201c5201b5201a52019520175201652015520145201252011520105200f5200e5200d5200b5200a520095100751006510045100351002510
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00100000247402473025730257302573025730257302473023730217301f7301e7301d7301c7301a730197301873016730157301373011730107300f7300d7300c7300b7300a7300973007730067300573004730
